@@ -1,1 +1,0 @@
-mongosh "mongodb+srv://nalinssn:YeR7Q7JUtwHwLTKR@cluster0.popl7gu.mongodb.net/?tls=true" -> To check ocnnection
