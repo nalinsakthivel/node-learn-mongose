@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017";
+const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017";
 // const mongoUri = "mongodb://localhost:27017";
 
 const client = new MongoClient(mongoUri, {
-  tls: false,
+  tls: true,
   tlsAllowInvalidCertificates: false,
   serverSelectionTimeoutMS: 5000,
   connectTimeoutMS: 10000,
