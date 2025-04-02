@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "start": "nodemon src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "serve": "node dist/index.js",
+    "serve": "node dist/app.js",
     "docs": "typedoc --options typedoc.json"
   },
   "keywords": [],
@@ -34,7 +34,8 @@
     "mongodb": "^6.15.0",
     "save-dev": "^0.0.1-security",
     "sqlite3": "^5.1.7",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

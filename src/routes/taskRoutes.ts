@@ -1,60 +1,52 @@
 import { Request, Response } from "express";
-import fs from "fs/promises";
 
-import { connectTaskDB } from "../utils/db";
-import { Task } from "../utils/storage";
+import { connectTaskDB } from "../config/dbConfig";
+import { Task } from "../model/taskModel";
+import logger from "../utils/logger";
+import { base64ToLink, writePhotoFile } from "../utils/fileIOHelper";
 
 // Get all tasks
 export const getTasks = async (req: Request, res: Response): Promise<void> => {
   try {
     const db = await connectTaskDB();
-    const tasks = await db.collection("tasks").find().toArray();
-    res.status(200).json({
-      status: "success",
-      data: tasks,
-    });
+    const tasks = await db.collection<Task[]>("tasks").find().toArray();
+    res.status(200).json(tasks);
+    logger.info("Get tasks da!", tasks);
   } catch (err) {
     res.status(500).send("DB error da!");
+    logger.error("Get tasks DB error da!", err);
   }
 };
 
 // Add a new task
 export const addTask = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { title } = req.body;
+    const { title, image } = req.body;
     if (!title) {
       res.status(400).send("Title venum da!");
+      logger.error("Title is missing da!");
       return;
     }
+
+    if (!image) {
+      res.status(400).send("Image venum da!");
+      logger.error("Image is missing da!");
+      return;
+    }
+
     const db = await connectTaskDB();
+    const link = await base64ToLink(image, Date.now());
     const newTask: Task = {
       id: Date.now(),
       title,
+      image: link,
       done: false,
     };
-    const result = await db.collection("tasks").insertOne(newTask);
-    res.status(201).json({ ...newTask, _id: result.insertedId });
+    await db.collection("tasks").insertOne(newTask);
+    res.status(201).json(newTask);
+    logger.info("Task added da!", newTask);
   } catch (err) {
     res.status(500).send("DB error da!");
-  }
-};
-
-export const uploadPhoto = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { photo } = req.body;
-  if (!photo) {
-    res.status(400).send("Base64 image venum da!");
-    return;
-  }
-
-  try {
-    const buffer = Buffer.from(photo, "base64");
-    const filename = `uploads/photo-${Date.now()}.jpg`;
-    await fs.writeFile(filename, buffer);
-    res.send(`File uploaded da: ${filename}`);
-  } catch (error) {
-    res.status(500).send("Invalid base64 data da!");
+    logger.error("Add task DB error da!", err);
   }
 };

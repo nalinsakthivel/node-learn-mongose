@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
-import { connectUsersDB } from "../utils/db";
+import { connectUsersDB } from "../config/dbConfig";
+import logger from "../utils/logger";
 
 interface Request extends ExpressRequest {
   user?: jwt.JwtPayload | string | object;
@@ -13,51 +14,101 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      res.status(400).send("Username and password venum da!");
+      res.status(400).json({ message: "Username and password venum da!" });
+      logger.error("Username or password is missing da!");
       return;
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const db = await connectUsersDB();
+
+    const existingUser = await db.collection("users").findOne({ username });
+    if (existingUser) {
+      res.status(400).json({ message: "Username already exists da!" });
+      logger.error("Username already exists da!", { username });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
     const userId = uuidv4();
     const date = new Date();
-    const db = await connectUsersDB();
-    await db
-      .collection("users")
-      .insertOne({ userid: userId, username, password: hashedPassword, date });
-    res.status(201).send("User created da!");
+
+    const result = await db.collection("users").insertOne({
+      userid: userId,
+      username,
+      password: hashedPassword,
+      date,
+    });
+
+    if (!result.acknowledged) {
+      throw new Error("User creation failed in DB");
+    }
+
+    res.status(201).json({ message: "User created da!", userid: userId });
+    logger.info("User created da!", { userid: userId, username, date });
   } catch (err) {
-    res.status(500).send("DB error da!");
+    res.status(500).json({ message: "DB error da!", error: err });
+    logger.error("Signup DB error da!", err);
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) {
+      res.status(400).json({ message: "Username and password venum da!" });
+      logger.error("Username or password is missing da!");
+      return;
+    }
+
     const db = await connectUsersDB();
     const user = await db.collection("users").findOne({ username });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ username, userid: user.userid }, "secret-key", {
-        expiresIn: "1h",
-      });
-      res.json({ token });
-    } else {
-      res.status(401).send("Wrong credentials da!");
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      res.status(401).json({ message: "Wrong credentials da!" });
+      logger.error("Login failed da!", { username });
+      return;
     }
+
+    const token = jwt.sign(
+      { username, userid: user.userid },
+      process.env.JWT_SECRET || "default-secret",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ message: "Login successful da!", token });
+    logger.info("User logged in da!", { username, userid: user.userid });
   } catch (err) {
-    res.status(500).send("DB error da!");
+    res.status(500).json({ message: "DB error da!", error: err });
+    logger.error("Login DB error da!", err);
   }
 };
 
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
+export const auth = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
-      res.status(401).send("Login pannu da!");
+      logger.error("Token is missing da!");
+      res.status(401).json({ message: "Login pannu da!" });
       return;
     }
-    const decoded = jwt.verify(token, "secret-key") as jwt.JwtPayload;
+
+    const secretKey = process.env.JWT_SECRET || "default-secret";
+    const decoded = jwt.verify(token, secretKey) as jwt.JwtPayload;
+
     req.user = decoded;
-    next();
+    logger.info("Token verified da!", decoded);
+
+    next(); // ✅ Correctly calling next() when verification is successful
   } catch (err) {
-    res.status(403).send("Invalid token da!");
+    if (err instanceof jwt.TokenExpiredError) {
+      logger.error("Token expired da!", { error: err.message });
+      res.status(401).json({ message: "Token expired da!" });
+      return;
+    }
+
+    logger.error("Token verification failed da!", { error: err });
+    res.status(403).json({ message: "Invalid token da!" });
+    return;
   }
 };

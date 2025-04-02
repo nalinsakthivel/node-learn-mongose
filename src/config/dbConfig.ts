@@ -7,7 +7,7 @@ const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017";
 // const mongoUri = "mongodb://localhost:27017";
 
 const client = new MongoClient(mongoUri, {
-  tls: true,
+  tls: false,
   tlsAllowInvalidCertificates: false,
   serverSelectionTimeoutMS: 5000,
   connectTimeoutMS: 10000,
