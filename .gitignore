@@ -1,0 +1,85 @@
+# Node modules (dependencies)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs/
+*.log
+logs/**/*.log
+npm-debug.log
+debug.log
+error.log
+server.log
+*.log.*
+log.json
+logs.json
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Database and system files
+*.sqlite
+*.sqlite-journal
+*.csv
+*.bak
+*.db
+*.sql
+
+# Compiled files and cache
+dist/
+build/
+.cache/
+tmp/
+out/
+coverage/
+.nyc_output/
+.next/
+.vercel/
+.docusaurus/
+.cache-loader/
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.~lock
+
+# Debugging and profiling files
+*.prof
+*.heapdump
+*.trace
+
+# Deployment files
+pm2.log
+pm2.pid
+.vscode/
+
+# Static file uploads
+public/uploads/
+public/static/
+public/images/
+public/temp/
+
+# Testing
+jest.config.js
+test-results/
+cypress/screenshots/
+cypress/videos/

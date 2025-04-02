@@ -1,0 +1,11 @@
+{
+  "out": "docs/typedoc",
+  "entryPoints": ["src"],
+  "exclude": "**/node_modules/**",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "includeVersion": true,
+  "theme": "default",
+  "entryPointStrategy": "expand",
+  "commentStyle": "jsdoc"
+}
