@@ -1,0 +1,217 @@
+{
+  "item": [
+    {
+      "id": "38ff80e6-53e8-492f-92ed-2b92d6fba0b5",
+      "name": "Get All Tasks",
+      "request": {
+        "url": {
+          "protocol": "http",
+          "port": "3000",
+          "path": [
+            "tasks"
+          ],
+          "host": [
+            "localhost"
+          ],
+          "query": [
+            {
+              "key": "members",
+              "value": []
+            },
+            {
+              "key": "reference",
+              "value": {}
+            },
+            {
+              "key": "Type",
+              "value": {
+                "_postman_propertyName": "QueryParam",
+                "_postman_propertyIndexKey": "key",
+                "_postman_propertyAllowsMultipleValues": true
+              }
+            },
+            {
+              "key": "_postman_listIndexKey",
+              "value": "key"
+            },
+            {
+              "key": "_postman_listAllowsMultipleValues",
+              "value": true
+            }
+          ],
+          "variable": []
+        },
+        "method": "GET",
+        "body": {}
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "f4de061e-8a92-4175-9590-7491a976eb3d",
+      "name": "Create Task",
+      "request": {
+        "url": {
+          "protocol": "http",
+          "port": "3000",
+          "path": [
+            "tasks"
+          ],
+          "host": [
+            "localhost"
+          ],
+          "query": [
+            {
+              "key": "members",
+              "value": []
+            },
+            {
+              "key": "reference",
+              "value": {}
+            },
+            {
+              "key": "Type",
+              "value": {
+                "_postman_propertyName": "QueryParam",
+                "_postman_propertyIndexKey": "key",
+                "_postman_propertyAllowsMultipleValues": true
+              }
+            },
+            {
+              "key": "_postman_listIndexKey",
+              "value": "key"
+            },
+            {
+              "key": "_postman_listAllowsMultipleValues",
+              "value": true
+            }
+          ],
+          "variable": []
+        },
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"New Task\",\n  \"image\": \"image-url\"\n}"
+        }
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "827411bb-dc42-4f80-9948-f6e200449a84",
+      "name": "User Login",
+      "request": {
+        "url": {
+          "protocol": "http",
+          "port": "3000",
+          "path": [
+            "login"
+          ],
+          "host": [
+            "localhost"
+          ],
+          "query": [
+            {
+              "key": "members",
+              "value": []
+            },
+            {
+              "key": "reference",
+              "value": {}
+            },
+            {
+              "key": "Type",
+              "value": {
+                "_postman_propertyName": "QueryParam",
+                "_postman_propertyIndexKey": "key",
+                "_postman_propertyAllowsMultipleValues": true
+              }
+            },
+            {
+              "key": "_postman_listIndexKey",
+              "value": "key"
+            },
+            {
+              "key": "_postman_listAllowsMultipleValues",
+              "value": true
+            }
+          ],
+          "variable": []
+        },
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"nalin\",\n  \"password\": \"nalin\"\n}"
+        }
+      },
+      "response": [],
+      "event": []
+    },
+    {
+      "id": "01cf25c6-e0ff-4db3-907e-bc249939e127",
+      "name": "User Signup",
+      "request": {
+        "url": {
+          "protocol": "http",
+          "port": "3000",
+          "path": [
+            "signup"
+          ],
+          "host": [
+            "localhost"
+          ],
+          "query": [
+            {
+              "key": "members",
+              "value": []
+            },
+            {
+              "key": "reference",
+              "value": {}
+            },
+            {
+              "key": "Type",
+              "value": {
+                "_postman_propertyName": "QueryParam",
+                "_postman_propertyIndexKey": "key",
+                "_postman_propertyAllowsMultipleValues": true
+              }
+            },
+            {
+              "key": "_postman_listIndexKey",
+              "value": "key"
+            },
+            {
+              "key": "_postman_listAllowsMultipleValues",
+              "value": true
+            }
+          ],
+          "variable": []
+        },
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"nalin\",\n  \"password\": \"nalin\"\n}"
+        }
+      },
+      "response": [],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [],
+  "info": {
+    "_postman_id": "325b646e-e796-4a71-b0e6-99ec84c5a972",
+    "name": "My API Collection",
+    "version": {
+      "raw": "1.0.0",
+      "major": 1,
+      "minor": 0,
+      "patch": 0,
+      "prerelease": [],
+      "build": [],
+      "string": "1.0.0"
+    },
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  }
+}
