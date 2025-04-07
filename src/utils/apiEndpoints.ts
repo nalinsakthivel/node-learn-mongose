@@ -1,4 +1,4 @@
-const apiEndpoints = [
+export const apiEndpoints = [
   {
     name: "Get All Tasks",
     method: "GET",

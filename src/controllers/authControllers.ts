@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { connectUsersDB } from "../config/dbConfig";
 import logger from "../utils/logger";
+import { StatusType } from "../enum/StatusType";
 
 interface Request extends ExpressRequest {
   user?: jwt.JwtPayload | string | object;
@@ -37,6 +38,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       username,
       password: hashedPassword,
       date,
+      status: StatusType.Active,
     });
 
     if (!result.acknowledged) {
@@ -61,7 +63,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const db = await connectUsersDB();
-    const user = await db.collection("users").findOne({ username });
+    const user = await db
+      .collection("users")
+      .findOne({ username, status: StatusType.Active });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ message: "Wrong credentials da!" });

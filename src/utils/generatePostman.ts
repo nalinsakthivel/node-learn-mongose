@@ -1,5 +1,6 @@
 import fs from "fs";
 import { Collection, Item, Request, Header } from "postman-collection";
+import { apiEndpoints } from "./apiEndpoints";
 
 const BASE_URL = "http://localhost:3000";
 

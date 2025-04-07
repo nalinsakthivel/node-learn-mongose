@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import authRouter from "./routes/authRoutes";
 import logger from "./utils/logger";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./utils/swagger-output.json";
 
 dotenv.config();
 const port = process.env.PORT || 3000;
@@ -20,6 +22,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send(`Welcome!`);
   logger.info("Welcome message sent da!");
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
   console.log(`Server running on port ${port} da!`);
