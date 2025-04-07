@@ -99,7 +99,7 @@ export const addTask = async (req: Request, res: Response): Promise<void> => {
 };
 
 //delete a task
-export const deleteTask = async (
+export const deleteTaskById = async (
   req: Request,
   res: Response
 ): Promise<void> => {
