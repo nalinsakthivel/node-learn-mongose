@@ -1,13 +1,15 @@
-const swaggerAutogen = require("swagger-autogen")();
+import swaggerAutogen from "swagger-autogen";
 
 const outputFile = "./swagger-output.json";
 const endpointsFiles = ["../app.ts"];
+
 const doc = {
   info: {
-    title: "My API",
+    title: "Task API",
     description: "Auto-generated API docs",
   },
   host: "localhost:3000",
+  schemes: ["http"],
   components: {
     securitySchemes: {
       bearerAuth: {
@@ -17,10 +19,13 @@ const doc = {
       },
     },
   },
-  security: [{ bearerAuth: [] }],
-  schemes: ["http"],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
 };
 
-swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
+swaggerAutogen()(outputFile, endpointsFiles, doc).then(() => {
   require("../app");
 });

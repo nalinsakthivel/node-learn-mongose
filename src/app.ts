@@ -18,11 +18,6 @@ app.use(taskRouter);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send(`Welcome!`);
-  logger.info("Welcome message sent da!");
-});
-
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {

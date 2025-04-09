@@ -24,7 +24,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const existingUser = await db.collection("users").findOne({ username });
     if (existingUser) {
-      res.status(400).json({ message: "Username already exists da!" });
+      res.status(400).send("Username already exists da!..Please Login");
       logger.error("Username already exists da!", { username });
       return;
     }
