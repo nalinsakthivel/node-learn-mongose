@@ -106,7 +106,7 @@ export const getTaskById = async (
       status: StatusType.Active,
     });
     if (!task) {
-      res.status(400).send("Task not found");
+      res.status(400).json({ message: "Task not found" });
       logger.error("Task not found", { taskId });
       return;
     }
