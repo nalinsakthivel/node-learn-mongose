@@ -1,5 +1,5 @@
-import logger from "./logger";
 import fs from "fs/promises";
+import { logger } from "./logger";
 
 export const writePhotoFile = async (photo: string): Promise<string> => {
   try {
@@ -17,8 +17,7 @@ export const writePhotoFile = async (photo: string): Promise<string> => {
 export const readPhotoFile = async (filename: string): Promise<string> => {
   try {
     const data = await fs.readFile(filename);
-    const base64 = data.toString("base64");
-    return base64;
+    return data.toString("base64");
   } catch (error) {
     console.error("Error reading file:", error);
     logger.error("Error reading file:", error);

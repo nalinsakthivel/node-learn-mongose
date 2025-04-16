@@ -1,12 +1,14 @@
 import swaggerAutogen from "swagger-autogen";
 
-const outputFile = "./swagger-output.json";
-const endpointsFiles = ["../app.ts"];
-
-const doc = {
+const swaggerDocument = {
   info: {
+    version: "1.0.0",
     title: "Task API",
     description: "Auto-generated API docs",
+    contact: {
+      name: "Nalin",
+      email: "nalinssn@gmail.com",
+    },
   },
   host: "localhost:3000",
   schemes: ["http"],
@@ -26,6 +28,7 @@ const doc = {
   ],
 };
 
-swaggerAutogen()(outputFile, endpointsFiles, doc).then(() => {
-  require("../app");
-});
+const swaggerFile = "../../swagger-output.json";
+const apiRouteFile = ["../app.ts"];
+
+swaggerAutogen()(swaggerFile, apiRouteFile, swaggerDocument);

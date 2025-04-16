@@ -3,29 +3,60 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
-import { connectUsersDB } from "../config/dbConfig";
-import logger from "../utils/logger";
 import { StatusType } from "../enum/StatusType";
+import { logger } from "../utils/logger";
+import { UserModel } from "../model/usermodel";
 
-interface Request extends ExpressRequest {
+interface Request extends ExpressRequest<{}, {}, UserModel> {
   user?: jwt.JwtPayload | string | object;
 }
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
+    /*
+    #swagger.tags = ['User CRUD']
+    #swagger.summary = 'User signup'
+    #swagger.description = 'Signup a user with valid credentials.'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        username: 'testuser',
+        password: 'password123'
+      }
+    }
+    #swagger.responses[201] = {
+      description: 'Signup successful',
+      schema: {
+        message: 'User created',
+        userid: 'string'
+      }
+    }
+    #swagger.responses[400] = {
+      description: 'Invalid username or password',
+      schema: {
+        message: 'Invalid username or password'
+      }
+    }
+    #swagger.responses[500] = {
+      description: 'DB error',
+      schema: {
+        message: 'DB error',
+        error: 'Some DB error details'
+      }
+    }
+  */
     const { username, password } = req.body;
     if (!username || !password) {
-      res.status(400).json({ message: "Username and password venum da!" });
-      logger.error("Username or password is missing da!");
+      res.status(400).json({ message: "Invalid username or password" });
+      logger.error("Invalid username or password");
       return;
     }
 
-    const db = await connectUsersDB();
-
-    const existingUser = await db.collection("users").findOne({ username });
+    const existingUser = await UserModel.findOne({ username });
     if (existingUser) {
-      res.status(400).send("Username already exists da!..Please Login");
-      logger.error("Username already exists da!", { username });
+      res.status(400).json({ message: "Username already exists" });
+      logger.error("Username already exists", { username });
       return;
     }
 
@@ -33,7 +64,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     const userId = uuidv4();
     const date = new Date();
 
-    const result = await db.collection("users").insertOne({
+    const user = new UserModel({
       userid: userId,
       username,
       password: hashedPassword,
@@ -41,35 +72,78 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       status: StatusType.Active,
     });
 
-    if (!result.acknowledged) {
-      throw new Error("User creation failed in DB");
+    const isInserted = await user.save();
+
+    if (!isInserted) {
+      res.status(400).json({ message: "User not created" });
+      logger.error("User not created", { username });
+      return;
     }
 
-    res.status(201).json({ message: "User created da!", userid: userId });
-    logger.info("User created da!", { userid: userId, username, date });
+    res.status(201).json({ message: "User created", userid: userId });
+    logger.info("User created", { userid: userId, username, date });
   } catch (err) {
-    res.status(500).json({ message: "DB error da!", error: err });
-    logger.error("Signup DB error da!", err);
+    res.status(500).json({ message: "DB error", error: err });
+    logger.error("Signup DB error", err);
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
+  /*
+    #swagger.tags = ['User CRUD']
+    #swagger.summary = 'User login'
+    #swagger.description = 'Login a user with valid credentials.'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        username: 'testuser',
+        password: 'password123'
+      }
+    }
+    #swagger.responses[201] = {
+      description: 'Login successful',
+      schema: {
+        message: 'Login successful',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6...'
+      }
+    }
+    #swagger.responses[400] = {
+      description: 'Invalid username or password',
+      schema: {
+        message: 'Invalid username or password'
+      }
+    }
+    #swagger.responses[401] = {
+      description: 'Wrong credentials',
+      schema: {
+        message: 'Wrong credentials'
+      }
+    }
+    #swagger.responses[500] = {
+      description: 'DB error',
+      schema: {
+        message: 'DB error',
+        error: 'Some DB error details'
+      }
+    }
+  */
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      res.status(400).json({ message: "Username and password venum da!" });
-      logger.error("Username or password is missing da!");
+      res.status(400).json({ message: "Invalid username or password" });
+      logger.error("Invalid username or password");
       return;
     }
 
-    const db = await connectUsersDB();
-    const user = await db
-      .collection("users")
-      .findOne({ username, status: StatusType.Active });
+    const user = await UserModel.findOne({
+      username,
+      status: StatusType.Active,
+    });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      res.status(401).json({ message: "Wrong credentials da!" });
-      logger.error("Login failed da!", { username });
+      res.status(401).json({ message: "Wrong credentials" });
+      logger.error("Login failed", { username });
       return;
     }
 
@@ -79,11 +153,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: "1h" }
     );
 
-    res.json({ message: "Login successful da!", token });
-    logger.info("User logged in da!", { username, userid: user.userid });
+    res.status(201).json({ message: "Login successful", token });
+    logger.info("User logged in", { username, userid: user.userid });
   } catch (err) {
-    res.status(500).json({ message: "DB error da!", error: err });
-    logger.error("Login DB error da!", err);
+    res.status(500).json({ message: "DB error", error: err });
+    logger.error("Login DB error", err);
   }
 };
 
@@ -92,8 +166,8 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      logger.error("Token is missing da!");
-      res.status(401).json({ message: "Login pannu da!" });
+      logger.error("Token is missing");
+      res.status(401).json({ message: "Need to login" });
       return;
     }
 
@@ -106,13 +180,13 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
-      logger.error("Token expired da!", { error: err.message });
-      res.status(401).json({ message: "Token expired da!" });
+      logger.error("Token expired", { error: err.message });
+      res.status(401).json({ message: "Token expired" });
       return;
     }
 
-    logger.error("Token verification failed da!", { error: err });
-    res.status(403).json({ message: "Invalid token da!" });
+    logger.error("Token verification failed", { error: err });
+    res.status(403).json({ message: "Invalid token" });
     return;
   }
 };

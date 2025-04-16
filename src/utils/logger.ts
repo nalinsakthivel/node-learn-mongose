@@ -1,30 +1,42 @@
-import winston from "winston";
-import path from "path";
-import fs from "fs";
+import {
+  createLogger,
+  format,
+  transports
+} from 'winston';
 
-// Ensure logs directory exists
-const logDir = "logs";
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
+import moment from 'moment';
 
-// Create Winston Logger
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => {
-      return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+const logTransports = [
+  new transports.File({
+    level: 'error',
+    filename: `./logs/${moment().format('DD-MMM-YYYY')}/Activity-${moment().format('hha')}.log`,
+    format: format.json({
+      replacer: (key, value) => {
+        if (key === 'error') {
+          return {
+            message: (value as Error).message,
+            stack: (value as Error).stack
+          };
+        }
+        return value;
+      }
     })
-  ),
-  transports: [
-    new winston.transports.Console({ format: winston.format.colorize() }),
-    new winston.transports.File({ filename: path.join(logDir, "app.log") }),
-    new winston.transports.File({
-      filename: path.join(logDir, "errors.log"),
-      level: "error",
-    }),
-  ],
-});
+  }),
+  new transports.Console({
+    level: 'debug',
+    format: format.prettyPrint()
+  }),
+  new transports.File({
+    level: 'info',
+    filename: `./logs/${moment().format('DD-MMM-YYYY')}/Activity-${moment().format('hha')}.log`,
+    format: format.prettyPrint()
+  })
+];
 
-export default logger;
+export const logger = createLogger({
+  format: format.combine(
+      format.timestamp()
+  ),
+  transports: logTransports,
+  defaultMeta: { service: 'api' }
+});
