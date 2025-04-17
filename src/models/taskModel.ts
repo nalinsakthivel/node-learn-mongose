@@ -1,5 +1,6 @@
 import { Document, Schema, model } from "mongoose";
-import { StatusType } from "../enum/StatusType";
+
+import { StatusType } from "@enums/StatusType";
 
 export interface TaskModel extends Document {
   id?: number;

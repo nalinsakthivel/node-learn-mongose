@@ -1,5 +1,6 @@
-import mongoose, { Document, Schema, model } from "mongoose";
-import { StatusType } from "../enum/StatusType";
+import { Document, Schema, model } from "mongoose";
+
+import { StatusType } from "@enums/StatusType";
 
 export interface UserModel extends Document {
   userid?: string;

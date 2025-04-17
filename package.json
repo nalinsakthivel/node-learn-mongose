@@ -1,9 +1,8 @@
 {
   "name": "learn",
   "version": "1.0.0",
-  "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.ts",
+    "start": "nodemon --exec ts-node -r tsconfig-paths/register src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "serve": "node dist/app.js",
@@ -26,6 +25,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typedoc": "^0.28.1",
     "typescript": "^5.8.3"
   },

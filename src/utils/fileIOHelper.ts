@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+
 import { logger } from "./logger";
 
 export const writePhotoFile = async (photo: string): Promise<string> => {

@@ -1,11 +1,11 @@
 import express from "express";
-import taskRouter from "./routes/taskRoutes";
 import dotenv from "dotenv";
-import authRouter from "./routes/authRoutes";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger-output.json";
-import { connectClient } from "./config/dbConfig";
+import authRouter from "@routes/authRoutes";
+import taskRouter from "@routes/taskRoutes";
+import { connectClient } from "@config/dbConfig";
 
 dotenv.config();
 const port = process.env.PORT || 3000;

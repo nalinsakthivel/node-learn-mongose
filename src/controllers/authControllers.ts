@@ -1,11 +1,11 @@
-import { Request as ExpressRequest, Response, NextFunction } from "express";
+import { Request as ExpressRequest, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
-import { StatusType } from "../enum/StatusType";
-import { logger } from "../utils/logger";
-import { UserModel } from "../model/usermodel";
+import { UserModel } from "@models/usermodel";
+import { logger } from "@utils/logger";
+import { StatusType } from "@enums/StatusType";
 
 interface Request extends ExpressRequest<{}, {}, UserModel> {
   user?: jwt.JwtPayload | string | object;
@@ -158,35 +158,5 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   } catch (err) {
     res.status(500).json({ message: "DB error", error: err });
     logger.error("Login DB error", err);
-  }
-};
-
-export const auth = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      logger.error("Token is missing");
-      res.status(401).json({ message: "Need to login" });
-      return;
-    }
-
-    const secretKey = process.env.JWT_SECRET || "default-secret";
-    const decoded = jwt.verify(token, secretKey) as jwt.JwtPayload;
-
-    req.user = decoded;
-    logger.info("Token verified da!", decoded);
-
-    next();
-  } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
-      logger.error("Token expired", { error: err.message });
-      res.status(401).json({ message: "Token expired" });
-      return;
-    }
-
-    logger.error("Token verification failed", { error: err });
-    res.status(403).json({ message: "Invalid token" });
-    return;
   }
 };

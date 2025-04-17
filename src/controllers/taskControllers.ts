@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 
-import { TaskModel } from "../model/taskModel";
-import { base64ToLink } from "../utils/fileIOHelper";
-import { StatusType } from "../enum/StatusType";
-import { logger } from "../utils/logger";
+import { StatusType } from "@enums/StatusType";
+import { TaskModel } from "@models/taskModel";
+import { base64ToLink } from "@utils/fileIOHelper";
+import { logger } from "@utils/logger";
 
 // Get all tasks
 export const getTasks = async (req: Request, res: Response): Promise<void> => {

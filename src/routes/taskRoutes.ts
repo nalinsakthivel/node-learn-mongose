@@ -1,12 +1,12 @@
 import express from "express";
 
-import { auth } from "../controllers/authControllers";
 import {
+  getTasks,
+  getTaskById,
   addTask,
   deleteTaskById,
-  getTaskById,
-  getTasks,
-} from "../controllers/taskControllers";
+} from "@controllers/taskControllers";
+import { auth } from "@middlewares/authMiddleware";
 
 const taskRouter = express.Router();
 
